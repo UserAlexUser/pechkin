@@ -16,6 +16,4 @@ public class User {
     private String firstname;
     private String secondname;
 
-    public User(){
-    }
 }

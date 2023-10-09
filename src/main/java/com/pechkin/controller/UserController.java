@@ -1,39 +1,36 @@
 package com.pechkin.controller;
 
-import com.pechkin.service.UserService;
 import com.pechkin.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.pechkin.service.UserService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
+@RequiredArgsConstructor
+@Slf4j
+@RequestMapping("/users")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @GetMapping("/allusers")
-    public ArrayList<User> getUsers() {
-        Optional users = userService.findAll();
-        return (ArrayList<User>) users.get();
+    @GetMapping("/{id}")
+    public Optional<User> getUser(@PathVariable("id") Long id) {
+        log.info("retrieving user");
+        return this.userService.findById(id);
     }
 
-    @GetMapping("{user}")
-    public String userEditForm(@PathVariable User user, Model model) {
-        model.addAttribute("user", user);
-
-        return "userEdit";
-    }
-
-    @GetMapping("profile")
-    public String getProfile(Model model, User user) {
-        model.addAttribute("username", user.getUsername());
-        model.addAttribute("email", user.getEmail());
-
-        return "profile";
+    @GetMapping()
+    public ResponseEntity<List<User>> getUsers() {
+        log.info("retrieving all users");
+        return ResponseEntity.ok(userService.findAll());
     }
 }
