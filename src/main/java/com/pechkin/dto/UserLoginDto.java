@@ -3,7 +3,7 @@ package com.pechkin.dto;
 import lombok.Data;
 
 @Data
-public class AuthenticationRequestDto {
+public class UserLoginDto {
     private String username;
     private String password;
 }

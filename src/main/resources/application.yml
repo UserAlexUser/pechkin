@@ -5,13 +5,14 @@ hostname: localhost:${server.port}
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost/pechkin
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/pechkin
     username: postgres
     password: postgres
   jpa:
-    generate-ddl: true
+    generate-ddl: false
     show-sql: true
-    hibernate.ddl-auto: create
+    hibernate.ddl-auto: validate
     properties:
       hibernate:
         jdbc:
@@ -23,6 +24,14 @@ spring:
       initialize-schema: always
     timeout:
       seconds: 900
+  flyway:
+    user: postgres
+    schemas: public
+    password: postgres
+    url: jdbc:postgresql://localhost:5432/pechkin
+    baseline-on-migrate: true
+#    enabled: true
+#    locations: classpath:db/migration
 
 security:
   jwt:

@@ -1,14 +1,17 @@
 package com.pechkin.model;
 
 import lombok.Data;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
+import java.io.File;
+import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name = "usr")
 @Data
-public class User extends BaseEntity {
+public class User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,6 +25,14 @@ public class User extends BaseEntity {
     private String password;
     @Column(name = "email")
     private String email;
+    @Column(name = "created")
+    private Date created;
+    @LastModifiedDate
+    @Column(name = "updated")
+    private Date updated;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private Status status;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",

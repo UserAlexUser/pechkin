@@ -1,29 +1,28 @@
 package com.pechkin.controller;
 
-import com.pechkin.dto.UserDto;
+import com.pechkin.dto.*;
+import com.pechkin.exception.UserAlreadyExistException;
 import com.pechkin.model.User;
 import com.pechkin.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping(value = "/users/")
+@RequestMapping(value = "/")
 public class UserController {
     private final UserService userService;
 
-    @GetMapping(value = "{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable(name = "id") Long id){
+    @GetMapping(value = "user/{id}")
+    public ResponseEntity<UserDto> getUserById(@PathVariable(name = "id") Long id) {
         User user = userService.findById(id);
 
-        if(user == null){
+        if (user == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
 
@@ -31,4 +30,28 @@ public class UserController {
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+    @PostMapping("user/profile")
+    public ResponseEntity<User> updateProfile(@RequestBody UserUpdateDto updateUser,
+                                              @RequestHeader(HttpHeaders.AUTHORIZATION) String authHttp) {
+        return new ResponseEntity<>(userService.updateProfile(updateUser, authHttp), HttpStatus.OK);
+    }
+
+    @PostMapping("user/password")
+    public ResponseEntity<User> updateProfilePassword(@RequestBody UserPasswordDto updatePassword,
+                                                      @RequestHeader(HttpHeaders.AUTHORIZATION) String authHttp) {
+        return new ResponseEntity<>(userService.updateProfilePassword(updatePassword, authHttp), HttpStatus.OK);
+    }
+
+    @PostMapping("/auth/registration")
+    public ResponseEntity<User> registration(@RequestBody UserRegisterDto registerUser)
+            throws UserAlreadyExistException {
+        return new ResponseEntity<>(userService.registerUser(registerUser), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/auth/login")
+    public ResponseEntity<AuthResponseDto> login(@RequestBody UserLoginDto userLogin) {
+        return new ResponseEntity<>(userService.login(userLogin), HttpStatus.OK);
+    }
+
 }

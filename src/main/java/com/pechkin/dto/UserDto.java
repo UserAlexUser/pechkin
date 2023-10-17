@@ -10,7 +10,7 @@ public class UserDto {
     private Long id;
     private String username;
     private String firstName;
-    private String lastName;
+    private String srcondName;
     private String email;
 
     public User toUser(){
@@ -18,9 +18,8 @@ public class UserDto {
         user.setId(id);
         user.setUsername(username);
         user.setFirstName(firstName);
-        user.setSecondName(lastName);
+        user.setSecondName(srcondName);
         user.setEmail(email);
-
         return user;
     }
 
@@ -29,9 +28,8 @@ public class UserDto {
         userDto.setId(user.getId());
         userDto.setUsername(user.getUsername());
         userDto.setFirstName(user.getFirstName());
-        userDto.setLastName(user.getSecondName());
+        userDto.setSrcondName(user.getSecondName());
         userDto.setEmail(user.getEmail());
-
         return userDto;
     }
 }

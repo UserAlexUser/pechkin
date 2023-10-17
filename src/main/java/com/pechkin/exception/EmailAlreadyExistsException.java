@@ -3,7 +3,9 @@ package com.pechkin.exception;
 
 public class EmailAlreadyExistsException extends RuntimeException {
 
-    public EmailAlreadyExistsException(String message) {
-        super(message);
+    private static final String ERROR_TEXT = "user with this email already exist";
+
+    public EmailAlreadyExistsException() {
+        super(ERROR_TEXT);
     }
 }

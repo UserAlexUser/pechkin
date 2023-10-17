@@ -1,5 +1,6 @@
 package com.pechkin.config;
 
+import com.pechkin.model.Roles;
 import com.pechkin.security.jwt.JwtConfigurer;
 import com.pechkin.security.jwt.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,8 +15,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtTokenProvider jwtTokenProvider;
-
-    private static final String ADMIN_ENDPOINT = "/admin/**";
+    private final String admin = Roles.ADMIN.getRoleName();
+    private final String user = Roles.USER.getRoleName();
 
     @Autowired
     public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
@@ -31,12 +32,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .httpBasic().disable()
                 .csrf().disable()
+                .httpBasic().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers(ADMIN_ENDPOINT).hasRole("ADMIN")
+
+                .antMatchers("/admin/**").hasRole(admin)
+                .antMatchers("/auth/registration").permitAll()
+                .antMatchers("/auth/login").permitAll()
+
+                .antMatchers("/messages/**").hasRole(user)
+                .antMatchers("/user/**").hasRole(user)
+
                 .anyRequest().authenticated()
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));

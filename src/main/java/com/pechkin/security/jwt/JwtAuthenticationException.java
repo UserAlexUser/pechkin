@@ -3,11 +3,9 @@ package com.pechkin.security.jwt;
 import org.springframework.security.core.AuthenticationException;
 
 public class JwtAuthenticationException extends AuthenticationException {
-    public JwtAuthenticationException(String msg, Throwable t) {
-        super(msg, t);
-    }
+    private static final String ERROR_TEXT = "JWT token is expired or invalid";
 
-    public JwtAuthenticationException(String msg) {
-        super(msg);
+    public JwtAuthenticationException() {
+        super(ERROR_TEXT);
     }
 }

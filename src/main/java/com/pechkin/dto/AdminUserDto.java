@@ -11,7 +11,7 @@ public class AdminUserDto {
     private Long id;
     private String username;
     private String firstName;
-    private String lastName;
+    private String secondName;
     private String email;
     private String status;
 
@@ -20,7 +20,7 @@ public class AdminUserDto {
         user.setId(id);
         user.setUsername(username);
         user.setFirstName(firstName);
-        user.setSecondName(lastName);
+        user.setSecondName(secondName);
         user.setEmail(email);
         user.setStatus(Status.valueOf(status));
         return user;
@@ -31,7 +31,7 @@ public class AdminUserDto {
         adminUserDto.setId(user.getId());
         adminUserDto.setUsername(user.getUsername());
         adminUserDto.setFirstName(user.getFirstName());
-        adminUserDto.setLastName(user.getSecondName());
+        adminUserDto.setSecondName(user.getSecondName());
         adminUserDto.setEmail(user.getEmail());
         adminUserDto.setStatus(user.getStatus().name());
         return adminUserDto;

@@ -2,6 +2,7 @@ package com.pechkin.security.jwt;
 
 import io.jsonwebtoken.*;
 import com.pechkin.model.Role;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 @Component
+@Slf4j
 public class JwtTokenProvider {
 
     @Value("${security.jwt.secret}")
@@ -28,6 +30,7 @@ public class JwtTokenProvider {
     @Value("${security.jwt.expired}")
     private long validityInMilliseconds;
 
+    @Autowired
     private UserDetailsService userDetailsService;
 
     @Bean
@@ -68,7 +71,7 @@ public class JwtTokenProvider {
 
     public String resolveToken(HttpServletRequest req) {
         String bearerToken = req.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer_")) {
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7, bearerToken.length());
         }
         return null;
@@ -77,14 +80,22 @@ public class JwtTokenProvider {
     public boolean validateToken(String token) {
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
-
-            if (claims.getBody().getExpiration().before(new Date())) {
-                return false;
-            }
-
-            return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            throw new JwtAuthenticationException("JWT token is expired or invalid");
+            return !claims.getBody().getExpiration().before(new Date());
+        } catch (SignatureException e) {
+            log.error("Invalid JWT signature -> Message: {} ", e.getMessage());
+            throw new JwtAuthenticationException();
+        } catch (MalformedJwtException e) {
+            log.error("Invalid JWT token -> Message: {}", e.getMessage());
+            throw new JwtAuthenticationException();
+        } catch (ExpiredJwtException e) {
+            log.error("Expired JWT token -> Message: {}", e.getMessage());
+            throw new JwtAuthenticationException();
+        } catch (UnsupportedJwtException e) {
+            log.error("Unsupported JWT token -> Message: {}", e.getMessage());
+            throw new JwtAuthenticationException();
+        } catch (IllegalArgumentException e) {
+            log.error("JWT claims string is empty -> Message: {}", e.getMessage());
+            throw new JwtAuthenticationException();
         }
     }
 
@@ -92,7 +103,7 @@ public class JwtTokenProvider {
         List<String> result = new ArrayList<>();
 
         userRoles.forEach(role -> {
-            result.add(role.getName());
+            result.add(role.getRoleName());
         });
 
         return result;

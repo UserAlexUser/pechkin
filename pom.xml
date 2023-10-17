@@ -17,6 +17,12 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<jsonwebtoken.version>0.8.0</jsonwebtoken.version>
+		<flyway.schemaName>public</flyway.schemaName>
+		<flyway.url><![CDATA[
+jdbc:postgresql://localhost:5432/pechkin
+        ]]></flyway.url>
+		<flyway.username>postgres</flyway.username>
+		<flyway.password>postgres</flyway.password>
 	</properties>
 
 	<dependencies>
@@ -32,6 +38,10 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-websocket</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -51,10 +61,10 @@
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>org.flywaydb</groupId>-->
-<!--			<artifactId>flyway-core</artifactId>-->
-<!--		</dependency>-->
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+		</dependency>
 
 		<!-- Lombok -->
 		<dependency>
@@ -78,6 +88,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>RELEASE</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -86,6 +102,19 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<version>${project.parent.version}</version>
+			</plugin>
+			<plugin>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<version>4.0.3</version>
+				<configuration>
+					<url>${flyway.url}</url>
+					<user>${flyway.username}</user>
+					<password>${flyway.password}</password>
+					<schemas>
+						<schema>${flyway.schemaName}</schema>
+					</schemas>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
