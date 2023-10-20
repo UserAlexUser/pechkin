@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -33,14 +35,14 @@ public class UserController {
 
     @PostMapping("user/profile")
     public ResponseEntity<User> updateProfile(@RequestBody UserUpdateDto updateUser,
-                                              @RequestHeader(HttpHeaders.AUTHORIZATION) String authHttp) {
-        return new ResponseEntity<>(userService.updateProfile(updateUser, authHttp), HttpStatus.OK);
+                                              HttpServletRequest request) {
+        return new ResponseEntity<>(userService.updateProfile(updateUser, request), HttpStatus.OK);
     }
 
     @PostMapping("user/password")
     public ResponseEntity<User> updateProfilePassword(@RequestBody UserPasswordDto updatePassword,
-                                                      @RequestHeader(HttpHeaders.AUTHORIZATION) String authHttp) {
-        return new ResponseEntity<>(userService.updateProfilePassword(updatePassword, authHttp), HttpStatus.OK);
+                                                      HttpServletRequest request) {
+        return new ResponseEntity<>(userService.updateProfilePassword(updatePassword, request), HttpStatus.OK);
     }
 
     @PostMapping("/auth/registration")

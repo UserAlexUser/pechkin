@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -48,9 +49,6 @@ public class UserService {
         User userFromDb = this.findByUsername(registerUser.getUsername());
         if (userFromDb != null) {
             throw new UserAlreadyExistException();
-        }
-        if (userFromDb.getEmail().equals(registerUser.getEmail())) {
-            throw new EmailAlreadyExistsException();
         }
 
         Role role = this.roleRepo.findByRoleName("ROLE_USER");
@@ -105,8 +103,9 @@ public class UserService {
         userRepo.deleteById(id);
     }
 
-    public User updateProfilePassword(UserPasswordDto passwordUser, String authHttp) {
-        User userFromDb = this.userRepo.findByUsername(jwtTokenProvider.getUsername(authHttp));
+    public User updateProfilePassword(UserPasswordDto passwordUser, HttpServletRequest request) {
+        String token = jwtTokenProvider.resolveToken(request);
+        User userFromDb = this.userRepo.findByUsername(jwtTokenProvider.getUsername(token));
         if (!StringUtils.isEmpty(passwordUser.getNewPassword())) {
             if (userFromDb.getPassword().equals(passwordEncoder.encode(passwordUser.getOldPassword()))) {
                 userFromDb.setPassword(passwordEncoder.encode(passwordUser.getNewPassword()));
@@ -115,8 +114,9 @@ public class UserService {
         return userRepo.save(userFromDb);
     }
 
-    public User updateProfile(UserUpdateDto updateUser, String authHttp){
-        User userFromDb = this.userRepo.findByUsername(jwtTokenProvider.getUsername(authHttp));
+    public User updateProfile(UserUpdateDto updateUser, HttpServletRequest request){
+        String token = jwtTokenProvider.resolveToken(request);
+        User userFromDb = this.userRepo.findByUsername(jwtTokenProvider.getUsername(token));
         if (!StringUtils.isEmpty(updateUser.getUsername())) {
             userFromDb.setUsername(updateUser.getUsername());
         }
