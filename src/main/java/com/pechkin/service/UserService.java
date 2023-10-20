@@ -98,9 +98,10 @@ public class UserService {
         return userRepo.findById(id).orElse(null);
     }
 
-    public void delete(Long id) {
-        log.info("deleted user {}", id);
-        userRepo.deleteById(id);
+    public void deleteUser(HttpServletRequest request) {
+        String token = jwtTokenProvider.resolveToken(request);
+        User userFromDb = this.userRepo.findByUsername(jwtTokenProvider.getUsername(token));
+        userRepo.deleteById(userFromDb.getId());
     }
 
     public User updateProfilePassword(UserPasswordDto passwordUser, HttpServletRequest request) {

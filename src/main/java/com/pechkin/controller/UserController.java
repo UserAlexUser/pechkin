@@ -8,10 +8,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpHeaders;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,6 +48,12 @@ public class UserController {
         return new ResponseEntity<>(userService.updateProfilePassword(updatePassword, request), HttpStatus.OK);
     }
 
+    @DeleteMapping("user/delete")
+    public ResponseEntity<?> deleteCurrentUser(HttpServletRequest request) {
+            userService.deleteUser(request);
+            return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PostMapping("/auth/registration")
     public ResponseEntity<User> registration(@RequestBody UserRegisterDto registerUser)
             throws UserAlreadyExistException {
@@ -54,6 +63,12 @@ public class UserController {
     @PostMapping("/auth/login")
     public ResponseEntity<AuthResponseDto> login(@RequestBody UserLoginDto userLogin) {
         return new ResponseEntity<>(userService.login(userLogin), HttpStatus.OK);
+    }
+
+    @PostMapping("/auth/logout")
+    public ResponseEntity<?> logout(HttpSession session) {
+        session.invalidate();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
