@@ -8,9 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,13 +34,13 @@ public class UserController {
     }
 
     @PostMapping("user/profile")
-    public ResponseEntity<User> updateProfile(@RequestBody UserUpdateDto updateUser,
+    public ResponseEntity<AuthResponseDto> updateProfile(@RequestBody UserUpdateDto updateUser,
                                               HttpServletRequest request) {
         return new ResponseEntity<>(userService.updateProfile(updateUser, request), HttpStatus.OK);
     }
 
     @PostMapping("user/password")
-    public ResponseEntity<User> updateProfilePassword(@RequestBody UserPasswordDto updatePassword,
+    public ResponseEntity<AuthResponseDto> updateProfilePassword(@RequestBody UserPasswordDto updatePassword,
                                                       HttpServletRequest request) {
         return new ResponseEntity<>(userService.updateProfilePassword(updatePassword, request), HttpStatus.OK);
     }

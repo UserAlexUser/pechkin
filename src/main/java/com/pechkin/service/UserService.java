@@ -2,7 +2,6 @@ package com.pechkin.service;
 
 import com.pechkin.dto.*;
 import com.pechkin.exception.UserAlreadyExistException;
-import com.pechkin.exception.EmailAlreadyExistsException;
 import com.pechkin.model.Role;
 import com.pechkin.model.Status;
 import com.pechkin.model.User;
@@ -24,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.Date;
-import java.util.List;
 
 @Service
 @Slf4j
@@ -83,11 +81,6 @@ public class UserService {
         }
     }
 
-    public List<User> findAll() {
-        log.info("retrieving all users");
-        return userRepo.findAll();
-    }
-
     public User findByUsername(String username) {
         log.info("found by username: {}", username);
         return userRepo.findByUsername(username);
@@ -104,7 +97,7 @@ public class UserService {
         userRepo.deleteById(userFromDb.getId());
     }
 
-    public User updateProfilePassword(UserPasswordDto passwordUser, HttpServletRequest request) {
+    public AuthResponseDto updateProfilePassword(UserPasswordDto passwordUser, HttpServletRequest request) {
         String token = jwtTokenProvider.resolveToken(request);
         User userFromDb = this.userRepo.findByUsername(jwtTokenProvider.getUsername(token));
         if (!StringUtils.isEmpty(passwordUser.getNewPassword())) {
@@ -112,10 +105,12 @@ public class UserService {
                 userFromDb.setPassword(passwordEncoder.encode(passwordUser.getNewPassword()));
             }
         }
-        return userRepo.save(userFromDb);
+        User user = userRepo.save(userFromDb);
+        String newToken = jwtTokenProvider.createToken(user.getUsername(), user.getRoles());
+        return new AuthResponseDto(user.getUsername(), newToken);
     }
 
-    public User updateProfile(UserUpdateDto updateUser, HttpServletRequest request){
+    public AuthResponseDto updateProfile(UserUpdateDto updateUser, HttpServletRequest request){
         String token = jwtTokenProvider.resolveToken(request);
         User userFromDb = this.userRepo.findByUsername(jwtTokenProvider.getUsername(token));
         if (!StringUtils.isEmpty(updateUser.getUsername())) {
@@ -134,6 +129,8 @@ public class UserService {
             userFromDb.setEmail(updateUser.getEmail());
         }
 
-        return userRepo.save(userFromDb);
+        User user = userRepo.save(userFromDb);
+        String newToken = jwtTokenProvider.createToken(user.getUsername(), user.getRoles());
+        return new AuthResponseDto(user.getUsername(), newToken);
     }
 }

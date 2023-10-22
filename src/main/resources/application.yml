@@ -1,8 +1,6 @@
 server:
   port: 9000
 
-hostname: localhost:${server.port}
-
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -22,14 +20,7 @@ spring:
     store-type: jdbc
     jdbc:
       initialize-schema: always
-    timeout:
-      seconds: 900
-  flyway:
-    user: postgres
-    schemas: public
-    password: postgres
-    url: jdbc:postgresql://localhost:5432/pechkin
-    baseline-on-migrate: true
+
 
 security:
   jwt:
