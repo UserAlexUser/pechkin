@@ -30,8 +30,6 @@ spring:
     password: postgres
     url: jdbc:postgresql://localhost:5432/pechkin
     baseline-on-migrate: true
-#    enabled: true
-#    locations: classpath:db/migration
 
 security:
   jwt:

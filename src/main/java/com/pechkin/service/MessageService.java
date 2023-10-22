@@ -55,15 +55,6 @@ public class MessageService {
         if (recipient == null) {
             throw new UsernameNotFoundException("User: " + recipientUsername + " not found");
         }
-//        Chat chat = chatRepo.findChatBySenderInAndRecipientIn(sender, recipient);
-//        if (chat != null) {
-//            List<Message> messages = messageRepo.findAllByChatOrderByTimestamp(chat);
-//            ChatHistoryDto chatHistoryDto = new ChatHistoryDto(messages);
-//            chatHistoryDto.setId(chat.getId());
-//            return chatHistoryDto;
-//        } else {
-//            return new ChatHistoryDto(Collections.emptyList());
-//        }
         try {
             Chat chat = chatRepo.findChatBySenderInAndRecipientIn(sender, recipient);
             List<Message> messages = messageRepo.findAllByChatOrderBySendingTime(chat);
